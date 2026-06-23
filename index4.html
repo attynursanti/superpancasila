@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garuda Adventure: Mari berPancasila</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter & Press Start 2P untuk nuansa Game) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1329;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+        canvas {
+            image-rendering: pixelated;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ef4444;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 overflow-x-hidden text-white">
+
+    <div id="app-container" class="relative w-full max-w-4xl bg-slate-900 border-4 border-red-600 rounded-2xl shadow-2xl overflow-hidden flex flex-col items-center">
+        
+        <!-- Header / Banner -->
+        <div class="w-full bg-gradient-to-r from-red-600 via-white to-red-600 p-3 flex justify-between items-center border-b-4 border-slate-800">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">🇮🇩</span>
+                <h1 class="text-xs md:text-md font-extrabold text-slate-900 uppercase tracking-wider">Garuda Adventure: Mari berPancasila</h1>
+            </div>
+            <div class="px-3 py-1 bg-slate-900 rounded-full border border-yellow-500 text-xs text-yellow-400 font-bold animate-pulse">
+                Fase F - Kelas XII SMA
+            </div>
+        </div>
+
+        <div class="relative w-full h-[500px] md:h-[550px] bg-sky-400">
+            
+            <!-- 1. START MENU SCREEN -->
+            <div id="menu-screen" class="absolute inset-0 flex flex-col items-center justify-between p-6 z-10 bg-gradient-to-b from-sky-300 via-sky-400 to-indigo-900">
+                
+                <!-- Floating Decorative clouds in Menu Background -->
+                <div class="absolute top-10 left-10 opacity-60 w-24 h-8 bg-white rounded-full blur-xs"></div>
+                <div class="absolute top-24 right-12 opacity-50 w-32 h-10 bg-white rounded-full blur-xs"></div>
+
+                <div class="text-center mt-6 z-10">
+                    <span class="text-6xl animate-bounce inline-block mb-3">🦅</span>
+                    <h2 class="pixel-font text-xl md:text-3xl text-yellow-300 drop-shadow-[0_4px_0_rgba(185,28,28,1)] text-center px-4 leading-relaxed">
+                        MARI BER-PANCASILA
+                    </h2>
+                    <p class="text-white text-sm md:text-md mt-4 font-extrabold drop-shadow-md">
+                        Game Platformer Pembelajaran Pendidikan Pancasila Kelas XII
+                    </p>
+                    <p class="text-yellow-300 text-[11px] md:text-xs mt-2 font-bold tracking-wide bg-slate-950/50 py-1 px-4 rounded-full inline-block border border-red-500/30">
+                        Pengembang: Atty Nursanti, S.Pd — SMAN 1 Majalengka
+                    </p>
+                </div>
+
+                <!-- Character Selection & Action Buttons -->
+                <div class="w-full max-w-md bg-slate-950/80 p-4 rounded-xl border-2 border-yellow-400 backdrop-blur-sm z-10">
+                    <h3 class="text-center font-bold text-yellow-300 mb-3 text-xs md:text-sm tracking-wide uppercase">PILIH PEJUANG PANCASILA:</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Panca Character Card -->
+                        <button id="char-panca-btn" onclick="selectCharacter('panca')" class="flex flex-col items-center p-3 rounded-lg border-2 border-yellow-500 bg-indigo-950/50 transition transform hover:scale-105">
+                            <canvas id="canvas-panca-preview" width="50" height="70" class="mb-2"></canvas>
+                            <span class="font-bold text-sm text-yellow-200">PANCA</span>
+                        </button>
+                        <!-- Sila Character Card -->
+                        <button id="char-sila-btn" onclick="selectCharacter('sila')" class="flex flex-col items-center p-3 rounded-lg border-2 border-transparent bg-slate-800/50 hover:bg-slate-700 transition transform hover:scale-105">
+                            <canvas id="canvas-sila-preview" width="50" height="70" class="mb-2"></canvas>
+                            <span class="font-bold text-sm text-yellow-200">SILA</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mb-6 w-full max-w-md z-10">
+                    <button onclick="startGame()" class="flex-1 bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-slate-950 font-extrabold py-3 px-6 rounded-xl shadow-lg shadow-red-500/30 active:scale-95 transition flex items-center justify-center space-x-2 text-md">
+                        <i class="fa-solid fa-play"></i>
+                        <span>MULAI PETUALANGAN</span>
+                    </button>
+                    <button onclick="toggleInstructions(true)" class="bg-slate-800 hover:bg-slate-700 border-2 border-slate-600 font-bold py-3 px-6 rounded-xl transition flex items-center justify-center space-x-2 text-sm">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>PETUNJUK</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="instructions-panel" class="absolute inset-0 bg-slate-950/95 z-40 hidden flex flex-col p-6 items-center justify-center text-slate-200">
+                <div class="max-w-xl w-full bg-slate-900 border-2 border-red-500 p-6 rounded-xl shadow-xl flex flex-col h-full max-h-[480px]">
+                    <h3 class="text-xl font-bold text-red-500 border-b border-slate-800 pb-2 mb-4 flex items-center">
+                        <i class="fa-solid fa-circle-info mr-2"></i> Petunjuk Permainan
+                    </h3>
+                    <div class="flex-1 overflow-y-auto space-y-4 pr-2 text-sm">
+                        <p class="text-slate-300 leading-relaxed">
+                            Selamat datang, duta Pancasila! Indonesia menghadapi berbagai tantangan global seperti berita hoaks, intoleransi, dan lunturnya gotong royong. Tugasmu bersama Panca dan Sila adalah mengumpulkan kembali pilar nilai kebangsaan!
+                        </p>
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
+                            <h4 class="font-bold text-yellow-400">🎮 Kontrol Gerakan:</h4>
+                            <ul class="list-disc list-inside text-xs space-y-1 pl-1">
+                                <li><strong>Tombol Kiri/A</strong> &amp; <strong>Kanan/D</strong>: Bergerak ke kiri dan kanan.</li>
+                                <li><strong>Tombol Atas/W/Spasi</strong>: Melompat (tekan dua kali untuk lompatan ganda!).</li>
+                                <li><strong>Layar Sentuh (Mobile)</strong>: Gunakan tombol virtual di bagian bawah layar.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
+                            <h4 class="font-bold text-yellow-400">💡 Mekanik Pendidikan Pancasila:</h4>
+                            <ul class="list-disc list-inside text-xs space-y-1 pl-1">
+                                <li>Lompati dan tabrak <strong>Kotak Soal berlambang "❓"</strong> untuk memicu kuis nilai-nilai Pancasila.</li>
+                                <li>Kuis dapat berupa <strong>Susun Kata</strong> (mengurutkan huruf acak menjadi kata nilai Pancasila) atau <strong>Pilihan Ganda</strong> tentang materi Pancasila Fase F Kelas XII.</li>
+                                <li>Selesaikan kuis untuk membuka portal dan melaju ke level berikutnya!</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="toggleInstructions(false)" class="mt-4 w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg transition">
+                        SAYA MENGERTI, KEMBALI
+                    </button>
+                </div>
+            </div>
+
+            <div id="game-screen" class="absolute inset-0 hidden">
+                <!-- Top Status Bar overlay -->
+                <div class="absolute top-0 inset-x-0 p-3 bg-slate-950/80 backdrop-blur-xs flex justify-between items-center text-xs md:text-sm z-20 font-semibold border-b border-slate-800">
+                    <div class="flex space-x-4 items-center">
+                        <div class="flex items-center space-x-1">
+                            <span class="text-red-500 text-lg">❤️</span>
+                            <span id="player-lives" class="font-bold text-red-400">3/3</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <span class="text-yellow-400 text-lg">⭐</span>
+                            <span id="player-score" class="font-bold text-yellow-400">0</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-slate-800/80 px-3 py-1 rounded-full border border-slate-600 flex items-center">
+                            <span class="text-sky-300 mr-1 text-xs">LEVEL:</span>
+                            <span id="level-display" class="font-bold text-sky-200">1</span>
+                        </div>
+                        <button id="btn-music-toggle" onclick="toggleMusic()" class="bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg border border-slate-600 text-yellow-400 transition transform active:scale-90" title="Aktifkan/Matikan Musik">
+                            <i id="music-icon" class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <button onclick="pauseGame()" class="bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg border border-slate-600">
+                            <i class="fa-solid fa-pause"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Game Level Badge -->
+                <div id="level-intro-badge" class="absolute top-16 left-1/2 -translate-x-1/2 bg-yellow-400 text-slate-900 border-2 border-slate-900 font-extrabold px-4 py-2 rounded-xl text-center shadow-lg transition-all duration-500 transform scale-0 z-20">
+                    <p id="level-intro-title" class="text-xs uppercase tracking-wider font-extrabold"></p>
+                    <p id="level-intro-desc" class="text-[10px] text-slate-800 font-semibold mt-1"></p>
+                </div>
+
+                <!-- Canvas -->
+                <canvas id="game-canvas" class="w-full h-full block bg-sky-300"></canvas>
+            </div>
+
+            <div id="quiz-overlay" class="absolute inset-0 bg-slate-950/95 z-30 hidden flex flex-col justify-center items-center p-4">
+                <div class="w-full max-w-lg bg-slate-900 border-4 border-yellow-500 rounded-2xl shadow-2xl p-5 md:p-6 flex flex-col justify-between max-h-[480px] overflow-y-auto">
+                    <!-- Quiz Header -->
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-4">
+                        <span class="text-yellow-400 font-extrabold text-sm tracking-widest uppercase flex items-center">
+                            <span class="animate-pulse mr-2">❓</span> KUIS PANCASILA
+                        </span>
+                        <span id="quiz-type-badge" class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase">
+                            SUSUN KATA
+                        </span>
+                    </div>
+
+                    <!-- Question Box -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 mb-4 text-center">
+                        <p id="quiz-prompt" class="text-sm md:text-md font-bold text-slate-100 leading-relaxed">
+                            Susunlah kata acak di bawah ini menjadi nilai luhur Pancasila yang tepat!
+                        </p>
+                    </div>
+
+                    <!-- Dynamic Quiz Area -->
+                    <div id="quiz-dynamic-area" class="flex-1 flex flex-col justify-center items-center mb-4">
+                        <!-- Content injected via JS -->
+                    </div>
+
+                    <!-- Quiz Feedback -->
+                    <div id="quiz-feedback" class="hidden text-center py-2 px-4 rounded-xl font-bold text-sm mb-3">
+                        <!-- Text injected via JS -->
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button id="quiz-submit-btn" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-extrabold py-3 px-6 rounded-xl shadow-lg transition duration-200">
+                        VERIFIKASI JAWABAN
+                    </button>
+                </div>
+            </div>
+
+            <div id="outcome-screen" class="absolute inset-0 bg-slate-950/95 z-30 hidden flex flex-col justify-center items-center p-6 text-center">
+                <div class="max-w-md w-full bg-slate-900 border-4 rounded-2xl p-6 shadow-2xl flex flex-col items-center">
+                    <span id="outcome-emoji" class="text-6xl mb-4 animate-bounce">🏆</span>
+                    <h3 id="outcome-title" class="pixel-font text-lg md:text-xl text-yellow-400 mb-2">LEVEL BERHASIL!</h3>
+                    <p id="outcome-desc" class="text-slate-300 text-sm mb-6 leading-relaxed">
+                        Kamu berhasil menjawab semua tantangan Pancasila di level ini!
+                    </p>
+                    
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 w-full mb-6 flex justify-around">
+                        <div class="text-center">
+                            <span class="block text-xs text-slate-400">Total Skor</span>
+                            <span id="outcome-score" class="text-xl font-extrabold text-yellow-400">0</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="block text-xs text-slate-400">Sisa Nyawa</span>
+                            <span id="outcome-lives" class="text-xl font-extrabold text-red-500">❤️❤️❤️</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col space-y-2 w-full">
+                        <button id="outcome-primary-btn" class="w-full bg-gradient-to-r from-red-600 to-amber-500 text-slate-900 font-extrabold py-3 px-6 rounded-xl shadow-lg transform active:scale-95 transition">
+                            LEVEL SELANJUTNYA
+                        </button>
+                        <button id="outcome-secondary-btn" onclick="returnToMainMenu()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 rounded-xl border border-slate-700 transition">
+                            KEMBALI KE MENU UTAMA
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pause Modal Overlay -->
+            <div id="pause-overlay" class="absolute inset-0 bg-slate-950/90 z-30 hidden flex flex-col justify-center items-center">
+                <div class="bg-slate-900 border-2 border-indigo-500 p-6 rounded-2xl shadow-2xl max-w-xs w-full text-center">
+                    <h3 class="pixel-font text-yellow-400 text-lg mb-4">GAME DIPAUS</h3>
+                    <button onclick="resumeGame()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl mb-2 transition">
+                        LANJUTKAN GAME
+                    </button>
+                    <button onclick="returnToMainMenu()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 rounded-xl transition">
+                        KEMBALI KE MENU
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="w-full bg-slate-950 p-4 border-t-4 border-slate-800 flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0 select-none">
+            <!-- Left Info -->
+            <div class="text-slate-400 text-xs text-center sm:text-left">
+                <p class="hidden sm:block"><i class="fa-solid fa-keyboard mr-1"></i> Gunakan tombol <span class="text-slate-200">A / D / Kiri / Kanan</span> untuk gerak, <span class="text-slate-200">W / Spasi</span> untuk Lompat.</p>
+                <p class="sm:hidden"><i class="fa-solid fa-mobile-screen mr-1"></i> Sentuh tombol virtual untuk mengendalikan.</p>
+                <p class="mt-0.5 text-[10px] text-slate-500">Materi Pancasila Kelas XII SMA © Kurikulum Merdeka Fase F | Pengembang: Atty Nursanti, S.Pd (SMAN 1 Majalengka)</p>
+            </div>
+
+            <!-- Virtual D-Pad for Mobile Screens -->
+            <div class="flex items-center space-x-6">
+                <!-- Movement Buttons -->
+                <div class="flex space-x-2">
+                    <button id="btn-touch-left" class="w-12 h-12 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-600 rounded-xl text-white flex items-center justify-center text-lg shadow-inner active:scale-90 select-none">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button id="btn-touch-right" class="w-12 h-12 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-600 rounded-xl text-white flex items-center justify-center text-lg shadow-inner active:scale-90 select-none">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                <!-- Action Buttons (Jump) -->
+                <div>
+                    <button id="btn-touch-jump" class="w-16 h-12 bg-red-600 hover:bg-red-500 active:bg-red-700 border border-red-500 rounded-xl text-white flex items-center justify-center font-black text-xs shadow-lg shadow-red-500/10 active:scale-90 select-none">
+                        LOMPAT
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let audioCtx = null;
+        let bgMusic = null;
+        let gameOverMusic = null;
+        let stageClearMusic = null;
+        let coinSound = null;
+        let isMusicEnabled = true;
+
+        // Inisialisasi Audio Latar dari Berkas MP3 yang Disediakan
+        function initMusic() {
+            if (!bgMusic) {
+                bgMusic = new Audio("super-mario-bros-music.mp3");
+                bgMusic.loop = true;
+                bgMusic.volume = isMusicEnabled ? 0.35 : 0.0;
+            }
+        }
+
+        // Inisialisasi Audio Kalah / Game Over
+        function initGameOverMusic() {
+            if (!gameOverMusic) {
+                gameOverMusic = new Audio("game-over-nsmb.mp3");
+                gameOverMusic.loop = false;
+                gameOverMusic.volume = isMusicEnabled ? 0.6 : 0.0;
+            }
+        }
+
+        // Inisialisasi Audio Berhasil Menang (Pindah Level) menggunakan lagu Smash Bros
+        function initStageClearMusic() {
+            if (!stageClearMusic) {
+                stageClearMusic = new Audio("super-smash-bros-mario-luigi-victory.mp3");
+                stageClearMusic.loop = false;
+                stageClearMusic.volume = isMusicEnabled ? 0.5 : 0.0;
+            }
+        }
+
+        // Inisialisasi Efek Suara Bintang/Koin Asli
+        function initCoinSound() {
+            if (!coinSound) {
+                coinSound = new Audio("super-mario-coin-sound_rp53n4m.mp3");
+                coinSound.volume = isMusicEnabled ? 0.5 : 0.0;
+            }
+        }
+
+        function startMusic() {
+            initMusic();
+            // Matikan musik game over & stage clear jika sedang diputar
+            if (gameOverMusic) {
+                gameOverMusic.pause();
+                gameOverMusic.currentTime = 0;
+            }
+            if (stageClearMusic) {
+                stageClearMusic.pause();
+                stageClearMusic.currentTime = 0;
+            }
+            if (isMusicEnabled && bgMusic) {
+                bgMusic.play().catch(err => {
+                    console.log("Pemutaran lagu terhambat proteksi browser:", err);
+                });
+            }
+        }
+
+        function stopMusic() {
+            if (bgMusic) {
+                bgMusic.pause();
+                bgMusic.currentTime = 0;
+            }
+        }
+
+        function toggleMusic() {
+            initMusic();
+            initGameOverMusic();
+            initStageClearMusic();
+            initCoinSound();
+            isMusicEnabled = !isMusicEnabled;
+            
+            const icon = document.getElementById('music-icon');
+            const btn = document.getElementById('btn-music-toggle');
+            
+            if (isMusicEnabled) {
+                bgMusic.volume = 0.35;
+                gameOverMusic.volume = 0.6;
+                if (stageClearMusic) stageClearMusic.volume = 0.5;
+                if (coinSound) coinSound.volume = 0.5;
+                // Jika sedang tidak di-pause dan game aktif, putar kembali bgm
+                if (gameActive && !isPaused) {
+                    bgMusic.play().catch(e => console.log("Gagal memutar musik latar:", e));
+                }
+                icon.className = "fa-solid fa-volume-high";
+                btn.className = "bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg border border-slate-600 text-yellow-400 transition transform active:scale-90";
+                playSound('coin');
+            } else {
+                bgMusic.volume = 0.0;
+                gameOverMusic.volume = 0.0;
+                if (stageClearMusic) stageClearMusic.volume = 0.0;
+                if (coinSound) coinSound.volume = 0.0;
+                bgMusic.pause();
+                gameOverMusic.pause();
+                if (stageClearMusic) stageClearMusic.pause();
+                icon.className = "fa-solid fa-volume-xmark";
+                btn.className = "bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg border border-slate-600 text-slate-500 transition transform active:scale-90";
+            }
+        }
+
+        // Lazy-load AudioContext untuk efek suara synthesizer saat interaksi terdeteksi
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'jump') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(150, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(450, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.15);
+                } else if (type === 'coin') {
+                    // Synthesized fallback jika berkas mp3 tidak termuat
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); 
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); 
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'powerup') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(261.63, ctx.currentTime); 
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                } else if (type === 'hit') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(60, ctx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); 
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); 
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.16); 
+                    osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.24); 
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.setValueAtTime(147, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch (e) {
+                console.log("Efek suara gagal dimainkan: ", e);
+            }
+        }
+
+        const LEVEL_DATA = [
+            {
+                level: 1,
+                title: "Harmoni & Kebinekaan Global",
+                description: "Sila 1 & 2: Kumpulkan nilai toleransi, saring rintangan intoleransi global!",
+                skyColor: "#38bdf8", // Bright Sky Blue 400
+                groundColor: "#22c55e", // Bright Grass Green
+                pointsNeeded: 3,
+                questions: [
+                    {
+                        type: "scramble",
+                        prompt: "Susun kata berikut yang menunjukkan sikap menghormati perbedaan beragama atau berkeyakinan di Indonesia!",
+                        scrambleText: "ISNAREOLT",
+                        correctText: "TOLERANSI",
+                        hint: "Sikap saling menghormati penganut agama lain."
+                    },
+                    {
+                        type: "multiple",
+                        prompt: "Di era digital global, sering kali terjadi perundungan siber (cyberbullying) lintas negara di media sosial yang mencederai martabat manusia. Tindakan yang sesuai dengan pengamalan Sila Kedua Pancasila adalah...",
+                        options: [
+                            "Ikut meramaikan kolom komentar untuk membela negara secara membabi buta.",
+                            "Menggunakan bahasa yang santun, menghargai privasi, dan melaporkan (report) akun pelaku perundungan siber.",
+                            "Mengabaikan saja karena korban perundungan bukan merupakan warga negara Indonesia.",
+                            "Membuat konten tandingan yang mengejek kembali pelaku perundungan dengan kata-kata kasar."
+                        ],
+                        correctIndex: 1,
+                        explanation: "Sila Kedua Pancasila (Kemanusiaan yang Adil dan Beradab) mengharuskan kita menjunjung tinggi hak asasi, memperlakukan orang lain secara beradab di dunia nyata maupun siber tanpa membedakan ras atau kewarganegaraan."
+                    },
+                    {
+                        type: "scramble",
+                        prompt: "Susun kata nilai kemanusiaan universal yang wajib kita hormati di seluruh belahan dunia!",
+                        scrambleText: "ANIKEMASUAN",
+                        correctText: "KEMANUSIAAN",
+                        hint: "Nilai luhur Sila ke-2 mengenai keadilan & peradaban makhluk sosial."
+                    }
+                ]
+            },
+            {
+                level: 2,
+                title: "Persatuan & Demokrasi Pancasila",
+                description: "Sila 3 & 4: Hindari hoaks pemecah belah, utamakan musyawarah dan harmoni!",
+                skyColor: "#0ea5e9", // Medium Bright Sky Blue 500
+                groundColor: "#10b981", // Vibrant Emerald Green
+                pointsNeeded: 3,
+                questions: [
+                    {
+                        type: "scramble",
+                        prompt: "Susun kata dasar penyelesaian masalah bersama dengan mufakat di Indonesia!",
+                        scrambleText: "HARAWASYUM",
+                        correctText: "MUSYAWARAH",
+                        hint: "Pengambilan keputusan bersama sesuai Sila ke-4."
+                    },
+                    {
+                        type: "multiple",
+                        prompt: "Menjelang pemilihan umum atau pemilihan organisasi, terdapat banyak berita bohong (hoaks) yang dapat memecah belah persatuan. Sikap kita sebagai pemilih cerdas yang Pancasila-is adalah...",
+                        options: [
+                            "Langsung ikut membagikan berita tersebut ke grup kelas agar viral.",
+                            "Melakukan cek fakta (saring sebelum sharing) demi menjaga persatuan bangsa.",
+                            "Menghasut kubu lawan agar persaingan makin ramai.",
+                            "Golput dan acuh tak acuh pada dinamika demokrasi."
+                        ],
+                        correctIndex: 1,
+                        explanation: "Sila ke-3 (Persatuan) menuntut kita menyaring informasi negatif pemecah belah dan mengutamakan integritas bangsa."
+                    },
+                    {
+                        type: "scramble",
+                        prompt: "Susun kata tentang tekad mempertahankan bangsa dari perpecahan!",
+                        scrambleText: "NTAURASPE",
+                        correctText: "PERSATUAN",
+                        hint: "Nilai luhur Sila ke-3 demi membendung disintegrasi bangsa."
+                    }
+                ]
+            },
+            {
+                level: 3,
+                title: "Keadilan Sosial & Tanggung Jawab Digital",
+                description: "Sila 5: Tegakkan hukum, hargai hak cipta, dan budayakan gotong royong siber!",
+                skyColor: "#0284c7", // Deep Sky Blue 600
+                groundColor: "#84cc16", // Lime Green
+                pointsNeeded: 3,
+                questions: [
+                    {
+                        type: "scramble",
+                        prompt: "Susun kata aktivitas khas Indonesia dalam bekerja sama membangun fasilitas publik!",
+                        scrambleText: "GOROTONGYONG",
+                        correctText: "GOTONGROYONG",
+                        hint: "Kerja bersama, bahu-membahu tanpa pamrih (tanpa spasi)."
+                    },
+                    {
+                        type: "multiple",
+                        prompt: "Bagaimanakah sikap kita dalam menghargai hasil karya orang lain di internet sebagai bagian dari penerapan nilai Sila Kelima Pancasila?",
+                        options: [
+                            "Mengklaim gambar buatan kreator lokal sebagai karya sendiri demi ketenaran.",
+                            "Mengunduh film bajakan sebanyak mungkin untuk ditonton bersama.",
+                            "Mencantumkan sumber (kredit) dan izin ketika memakai karya digital orang lain.",
+                            "Menjelek-jelekkan karya kreatif buatan anak negeri di media sosial."
+                        ],
+                        correctIndex: 2,
+                        explanation: "Menghargai hasil karya orang lain merupakan amanat penting dari Sila ke-5 (Keadilan Sosial)."
+                    },
+                    {
+                        type: "scramble",
+                        prompt: "Susun kata prinsip memperlakukan semua orang sama di hadapan hukum dan sosial!",
+                        scrambleText: "NALDAEKI",
+                        correctText: "KEADILAN",
+                        hint: "Sila ke-5 menghendaki tegaknya prinsip ini di seluruh lapisan nusantara."
+                    }
+                ]
+            }
+        ];
+
+        function drawCharPreview(canvasId, type) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.beginPath();
+            ctx.ellipse(25, 64, 12, 4, 0, 0, Math.PI*2);
+            ctx.fill();
+
+            // Outline drawing configuration
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1.5;
+
+            // Head (Skin tone)
+            ctx.fillStyle = '#ffdbac';
+            ctx.beginPath();
+            ctx.arc(25, 20, 9, 0, Math.PI*2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Hair
+            ctx.fillStyle = type === 'panca' ? '#1e293b' : '#312e81';
+            if (type === 'panca') {
+                ctx.fillRect(16, 9, 18, 5);
+                ctx.strokeRect(16, 9, 18, 5);
+            } else {
+                ctx.beginPath();
+                ctx.arc(25, 18, 10, Math.PI, 0);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillRect(15, 18, 3, 9);
+                ctx.fillRect(32, 18, 3, 9);
+            }
+
+            // Eyes
+            ctx.fillStyle = '#000';
+            ctx.fillRect(21, 18, 2, 2);
+            ctx.fillRect(27, 18, 2, 2);
+
+            // Red/White Bandana/Ribbon
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(15, 29, 20, 3);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(15, 32, 20, 2);
+
+            // Body (Patriotic Red Shirt)
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(16, 36, 18, 16);
+            ctx.strokeRect(16, 36, 18, 16);
+
+            // Pancasila Gold Star Emblem (instead of tie)
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(24, 38, 2, 2);
+
+            // Pants or Skirt (Patriotic White Outfit)
+            ctx.fillStyle = '#ffffff';
+            if (type === 'panca') {
+                // Left leg pants (white)
+                ctx.fillRect(16, 52, 7, 9);
+                ctx.strokeRect(16, 52, 7, 9);
+                // Right leg pants (white)
+                ctx.fillRect(27, 52, 7, 9);
+                ctx.strokeRect(27, 52, 7, 9);
+            } else {
+                // Skirt (white)
+                ctx.beginPath();
+                ctx.moveTo(15, 52);
+                ctx.lineTo(35, 52);
+                ctx.lineTo(37, 61);
+                ctx.lineTo(13, 61);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Shoes (Black)
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(15, 61, 8, 3);
+            ctx.fillRect(27, 61, 8, 3);
+        }
+
+        // Initialize previews on load
+        window.onload = function() {
+            drawCharPreview('canvas-panca-preview', 'panca');
+            drawCharPreview('canvas-sila-preview', 'sila');
+        };
+
+        let activeCharacter = 'panca'; 
+        let gameActive = false;
+        let isPaused = false;
+        let score = 0;
+        let lives = 3;
+        let currentLevelIndex = 0;
+
+        // UI screen references
+        const menuScreen = document.getElementById('menu-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const outcomeScreen = document.getElementById('outcome-screen');
+        const pauseOverlay = document.getElementById('pause-overlay');
+        const quizOverlay = document.getElementById('quiz-overlay');
+        const instructionsPanel = document.getElementById('instructions-panel');
+
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Layout dimensions - fixed virtual width & height for responsive drawing coordinate scaling
+        const VIRTUAL_WIDTH = 800;
+        const VIRTUAL_HEIGHT = 450;
+
+        function resizeCanvas() {
+            canvas.width = VIRTUAL_WIDTH;
+            canvas.height = VIRTUAL_HEIGHT;
+        }
+
+        function selectCharacter(char) {
+            playSound('coin');
+            activeCharacter = char;
+            document.getElementById('char-panca-btn').className = char === 'panca' ? 
+                "flex flex-col items-center p-3 rounded-lg border-2 border-yellow-400 bg-indigo-950/60 transition transform scale-105" : 
+                "flex flex-col items-center p-3 rounded-lg border-2 border-transparent bg-slate-800/50 hover:bg-slate-700 transition transform hover:scale-105";
+            document.getElementById('char-sila-btn').className = char === 'sila' ? 
+                "flex flex-col items-center p-3 rounded-lg border-2 border-yellow-400 bg-indigo-950/60 transition transform scale-105" : 
+                "flex flex-col items-center p-3 rounded-lg border-2 border-transparent bg-slate-800/50 hover:bg-slate-700 transition transform hover:scale-105";
+        }
+
+        function toggleInstructions(show) {
+            playSound('coin');
+            instructionsPanel.style.display = show ? 'flex' : 'none';
+        }
+
+        class Player {
+            constructor(x, y, characterType) {
+                this.x = x;
+                this.y = y;
+                this.width = 30;
+                this.height = 48;
+                this.vx = 0;
+                this.vy = 0;
+                this.speed = 4.8;
+                this.jumpStrength = -8.5;
+                this.gravity = 0.38;
+                this.grounded = false;
+                this.characterType = characterType;
+                this.doubleJumpAvailable = true;
+                this.facingRight = true;
+                this.invulnerableTimer = 0;
+            }
+
+            update() {
+                // Apply gravity
+                this.vy += this.gravity;
+                
+                // Horizontal motion
+                this.x += this.vx;
+                // Vertical motion
+                this.y += this.vy;
+
+                // Screen limits
+                if (this.x < 0) this.x = 0;
+                if (this.x > VIRTUAL_WIDTH - this.width) this.x = VIRTUAL_WIDTH - this.width;
+
+                // Ground limits
+                if (this.y > VIRTUAL_HEIGHT - 65 - this.height) {
+                    this.y = VIRTUAL_HEIGHT - 65 - this.height;
+                    this.vy = 0;
+                    this.grounded = true;
+                    this.doubleJumpAvailable = true;
+                }
+
+                // Invulnerable flashing cooldown
+                if (this.invulnerableTimer > 0) {
+                    this.invulnerableTimer--;
+                }
+            }
+
+            draw() {
+                // Flashing if invulnerable
+                if (this.invulnerableTimer > 0 && Math.floor(this.invulnerableTimer / 4) % 2 === 0) {
+                    return;
+                }
+
+                ctx.save();
+                // Flip horizontally if facing left
+                if (!this.facingRight) {
+                    ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+                    ctx.scale(-1, 1);
+                    ctx.translate(-(this.x + this.width / 2), -(this.y + this.height / 2));
+                }
+
+                const px = this.x;
+                const py = this.y;
+
+                // Dark outline config
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 2;
+
+                // 1. Head (Skin tone)
+                ctx.fillStyle = '#ffdbac';
+                ctx.beginPath();
+                ctx.arc(px + 15, py + 12, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // 2. Hair / Cap
+                ctx.fillStyle = this.characterType === 'panca' ? '#1e293b' : '#312e81';
+                if (this.characterType === 'panca') {
+                    ctx.fillRect(px + 7, py + 3, 16, 4); // Hair top
+                    ctx.strokeRect(px + 7, py + 3, 16, 4);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(px + 15, py + 10, 9, Math.PI, 0);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.fillRect(px + 6, py + 10, 3, 8); // Hair side L
+                    ctx.fillRect(px + 21, py + 10, 3, 8); // Hair side R
+                }
+
+                // Eyes
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(px + 12, py + 10, 2, 2);
+                ctx.fillRect(px + 18, py + 10, 2, 2);
+
+                // 3. Red & White Pancasila Sash/Bandana
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(px + 5, py + 20, 20, 3);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(px + 5, py + 23, 20, 2);
+
+                // 4. Heroic Red Shirt (Merah)
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(px + 6, py + 25, 18, 14);
+                ctx.strokeRect(px + 6, py + 25, 18, 14);
+                
+                // Gold star emblem
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillRect(px + 14, py + 28, 2, 2);
+
+                // 5. White Pants/Skirt (Putih)
+                ctx.fillStyle = '#ffffff';
+                if (this.characterType === 'panca') {
+                    // Pants legs
+                    ctx.fillRect(px + 6, py + 39, 7, 7);
+                    ctx.strokeRect(px + 6, py + 39, 7, 7);
+                    ctx.fillRect(px + 17, py + 39, 7, 7);
+                    ctx.strokeRect(px + 17, py + 39, 7, 7);
+                } else {
+                    // Skirt
+                    ctx.beginPath();
+                    ctx.moveTo(px + 5, py + 39);
+                    ctx.lineTo(px + 25, py + 39);
+                    ctx.lineTo(px + 27, py + 46);
+                    ctx.lineTo(px + 3, py + 46);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                }
+
+                // 6. Shoes
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(px + 5, py + 46, 8, 3);
+                ctx.fillRect(px + 17, py + 46, 8, 3);
+
+                ctx.restore();
+            }
+
+            jump() {
+                if (this.grounded) {
+                    this.vy = this.jumpStrength;
+                    this.grounded = false;
+                    playSound('jump');
+                } else if (this.doubleJumpAvailable) {
+                    this.vy = this.jumpStrength * 0.9;
+                    this.doubleJumpAvailable = false;
+                    playSound('jump');
+                }
+            }
+        }
+
+        class Platform {
+            constructor(x, y, width, height, type = "normal") {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.type = type; // "normal", "moving"
+                this.direction = 1;
+                this.range = 80;
+                this.startX = x;
+            }
+
+            update() {
+                if (this.type === "moving") {
+                    this.x += 1.2 * this.direction;
+                    if (Math.abs(this.x - this.startX) > this.range) {
+                        this.direction *= -1;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.save();
+                const levelConfig = LEVEL_DATA[currentLevelIndex];
+                
+                // Main Platform drawing (Green grassy tops)
+                ctx.fillStyle = levelConfig.groundColor;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+                // Top highlight line (yellow/light-green grass border)
+                ctx.fillStyle = "#a3e635"; 
+                ctx.fillRect(this.x, this.y, this.width, 5);
+
+                // Brick vertical outline details
+                ctx.strokeStyle = "rgba(0,0,0,0.15)";
+                ctx.lineWidth = 1.5;
+                for (let px = this.x + 20; px < this.x + this.width; px += 25) {
+                    ctx.beginPath();
+                    ctx.moveTo(px, this.y + 5);
+                    ctx.lineTo(px, this.y + this.height);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
+
+        class QuizBlock {
+            constructor(x, y, id) {
+                this.x = x;
+                this.y = y;
+                this.width = 32;
+                this.height = 32;
+                this.id = id;
+                this.answered = false;
+                this.pulseTimer = 0;
+            }
+
+            update() {
+                this.pulseTimer += 0.05;
+            }
+
+            draw() {
+                ctx.save();
+                const bounce = Math.sin(this.pulseTimer) * 2;
+
+                if (this.answered) {
+                    // Empty grey block once answered
+                    ctx.fillStyle = '#64748b';
+                    ctx.fillRect(this.x, this.y + bounce, this.width, this.height);
+                    ctx.strokeStyle = '#1e293b';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(this.x, this.y + bounce, this.width, this.height);
+                    
+                    ctx.fillStyle = '#22c55e';
+                    ctx.font = 'bold 12px Inter';
+                    ctx.fillText('✓', this.x + 11, this.y + bounce + 21);
+                } else {
+                    // Golden-Red active glowing Quiz block
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(this.x, this.y + bounce, this.width, this.height);
+
+                    ctx.strokeStyle = '#facc15'; // Bright yellow border
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(this.x, this.y + bounce, this.width, this.height);
+
+                    // Central glowing "?"
+                    ctx.fillStyle = '#facc15';
+                    ctx.font = 'bold 16px "Press Start 2P"';
+                    ctx.fillText('?', this.x + 9, this.y + bounce + 24);
+                }
+                ctx.restore();
+            }
+        }
+
+        class StarCoin {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 16;
+                this.height = 16;
+                this.collected = false;
+                this.bounceTimer = Math.random() * 10;
+            }
+
+            draw() {
+                if (this.collected) return;
+                ctx.save();
+                const bounce = Math.sin(this.bounceTimer) * 3;
+                this.bounceTimer += 0.1;
+
+                ctx.fillStyle = '#fbbf24'; // Pancasila star gold
+                ctx.beginPath();
+                const cx = this.x + 8;
+                const cy = this.y + 8 + bounce;
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * 8 + cx, -Math.sin((18 + i * 72) * Math.PI / 180) * 8 + cy);
+                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * 3 + cx, -Math.sin((54 + i * 72) * Math.PI / 180) * 3 + cy);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#d97706';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        class Hazard {
+            constructor(x, y, textLabel) {
+                this.x = x;
+                this.y = y;
+                this.startX = x;
+                this.width = 50;
+                this.height = 25;
+                this.textLabel = textLabel; 
+                this.vx = 0.9;
+                this.range = 75;
+            }
+
+            update() {
+                this.x += this.vx;
+                if (Math.abs(this.x - this.startX) > this.range) {
+                    this.vx *= -1;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                // Spiky dark hazard
+                ctx.fillStyle = '#dc2626'; 
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.height);
+                ctx.lineTo(this.x + this.width / 4, this.y);
+                ctx.lineTo(this.x + this.width / 2, this.y + this.height);
+                ctx.lineTo(this.x + (3 * this.width) / 4, this.y);
+                ctx.lineTo(this.x + this.width, this.y + this.height);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#450a0a';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Text Overlay
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 8px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.textLabel, this.x + this.width / 2, this.y + this.height - 4);
+                ctx.restore();
+            }
+        }
+
+        class Portal {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 40;
+                this.height = 60;
+                this.spinAngle = 0;
+            }
+
+            draw() {
+                ctx.save();
+                this.spinAngle += 0.05;
+
+                const cx = this.x + this.width / 2;
+                const cy = this.y + this.height / 2;
+                
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, this.width / 2, this.height / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Spinning target outer rings
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, (this.width / 2) * (1 + Math.sin(this.spinAngle)*0.1), (this.height / 2) * (1 + Math.sin(this.spinAngle)*0.1), this.spinAngle, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.strokeStyle = '#4ade80';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, (this.width / 3) * (1 - Math.sin(this.spinAngle)*0.1), (this.height / 3) * (1 - Math.sin(this.spinAngle)*0.1), -this.spinAngle * 1.5, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Small decorative Indonesian flag on top of portal
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(cx - 6, cy - this.height/2 - 6, 12, 4);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(cx - 6, cy - this.height/2 - 2, 12, 3);
+
+                ctx.restore();
+            }
+        }
+
+        let player;
+        let platforms = [];
+        let quizBlocks = [];
+        let starCoins = [];
+        let hazards = [];
+        let portal;
+
+        function loadLevel(levelIdx) {
+            currentLevelIndex = levelIdx;
+            const levelConfig = LEVEL_DATA[levelIdx];
+
+            // Trigger Intro Badge Animation
+            const introBadge = document.getElementById('level-intro-badge');
+            document.getElementById('level-intro-title').innerText = `Level ${levelIdx + 1}: ${levelConfig.title}`;
+            document.getElementById('level-intro-desc').innerText = levelConfig.description;
+            introBadge.classList.remove('scale-0');
+            introBadge.classList.add('scale-100');
+            setTimeout(() => {
+                introBadge.classList.remove('scale-100');
+                introBadge.classList.add('scale-0');
+            }, 4000);
+
+            // Construct Player
+            player = new Player(50, VIRTUAL_HEIGHT - 110, activeCharacter);
+
+            // Rebuild elements
+            platforms = [];
+            quizBlocks = [];
+            starCoins = [];
+            hazards = [];
+
+            // Add standard ground floor platform
+            platforms.push(new Platform(0, VIRTUAL_HEIGHT - 65, VIRTUAL_WIDTH, 70));
+
+            if (levelIdx === 0) {
+                // LEVEL 1: Harmoni & Kebinekaan
+                platforms.push(new Platform(120, VIRTUAL_HEIGHT - 130, 100, 15));
+                platforms.push(new Platform(280, VIRTUAL_HEIGHT - 200, 150, 15));
+                platforms.push(new Platform(480, VIRTUAL_HEIGHT - 130, 120, 15, "moving"));
+                platforms.push(new Platform(650, VIRTUAL_HEIGHT - 210, 120, 15));
+
+                quizBlocks.push(new QuizBlock(160, VIRTUAL_HEIGHT - 190, 0));
+                quizBlocks.push(new QuizBlock(350, VIRTUAL_HEIGHT - 270, 1));
+                quizBlocks.push(new QuizBlock(700, VIRTUAL_HEIGHT - 280, 2));
+
+                starCoins.push(new StarCoin(150, VIRTUAL_HEIGHT - 160));
+                starCoins.push(new StarCoin(320, VIRTUAL_HEIGHT - 230));
+                starCoins.push(new StarCoin(530, VIRTUAL_HEIGHT - 180));
+                starCoins.push(new StarCoin(720, VIRTUAL_HEIGHT - 240));
+
+                hazards.push(new Hazard(250, VIRTUAL_HEIGHT - 90, "INTOLERANSI"));
+                hazards.push(new Hazard(480, VIRTUAL_HEIGHT - 90, "SARA"));
+
+                portal = new Portal(740, VIRTUAL_HEIGHT - 275);
+
+            } else if (levelIdx === 1) {
+                // LEVEL 2: Persatuan & Demokrasi
+                platforms.push(new Platform(100, VIRTUAL_HEIGHT - 120, 100, 15));
+                platforms.push(new Platform(240, VIRTUAL_HEIGHT - 180, 80, 15));
+                platforms.push(new Platform(360, VIRTUAL_HEIGHT - 240, 140, 15, "moving"));
+                platforms.push(new Platform(540, VIRTUAL_HEIGHT - 160, 100, 15));
+                platforms.push(new Platform(680, VIRTUAL_HEIGHT - 220, 100, 15));
+
+                quizBlocks.push(new QuizBlock(140, VIRTUAL_HEIGHT - 170, 0));
+                quizBlocks.push(new QuizBlock(420, VIRTUAL_HEIGHT - 310, 1));
+                quizBlocks.push(new QuizBlock(720, VIRTUAL_HEIGHT - 290, 2));
+
+                starCoins.push(new StarCoin(120, VIRTUAL_HEIGHT - 150));
+                starCoins.push(new StarCoin(280, VIRTUAL_HEIGHT - 210));
+                starCoins.push(new StarCoin(400, VIRTUAL_HEIGHT - 280));
+                starCoins.push(new StarCoin(580, VIRTUAL_HEIGHT - 190));
+
+                hazards.push(new Hazard(200, VIRTUAL_HEIGHT - 90, "HOAKS"));
+                hazards.push(new Hazard(400, VIRTUAL_HEIGHT - 90, "HASUTAN"));
+                hazards.push(new Hazard(560, VIRTUAL_HEIGHT - 90, "ADU DOMBA"));
+
+                portal = new Portal(720, VIRTUAL_HEIGHT - 285);
+
+            } else if (levelIdx === 2) {
+                // LEVEL 3: Keadilan Sosial & Tanggung Jawab Digital
+                platforms.push(new Platform(80, VIRTUAL_HEIGHT - 130, 90, 15));
+                platforms.push(new Platform(200, VIRTUAL_HEIGHT - 200, 90, 15, "moving"));
+                platforms.push(new Platform(320, VIRTUAL_HEIGHT - 120, 90, 15));
+                platforms.push(new Platform(450, VIRTUAL_HEIGHT - 220, 100, 15, "moving"));
+                platforms.push(new Platform(580, VIRTUAL_HEIGHT - 160, 80, 15));
+                platforms.push(new Platform(680, VIRTUAL_HEIGHT - 240, 100, 15));
+
+                quizBlocks.push(new QuizBlock(120, VIRTUAL_HEIGHT - 180, 0));
+                quizBlocks.push(new QuizBlock(490, VIRTUAL_HEIGHT - 290, 1));
+                quizBlocks.push(new QuizBlock(710, VIRTUAL_HEIGHT - 310, 2));
+
+                starCoins.push(new StarCoin(110, VIRTUAL_HEIGHT - 160));
+                starCoins.push(new StarCoin(230, VIRTUAL_HEIGHT - 230));
+                starCoins.push(new StarCoin(360, VIRTUAL_HEIGHT - 150));
+                starCoins.push(new StarCoin(610, VIRTUAL_HEIGHT - 200));
+
+                hazards.push(new Hazard(150, VIRTUAL_HEIGHT - 90, "EGOISME"));
+                hazards.push(new Hazard(380, VIRTUAL_HEIGHT - 90, "KORUPSI"));
+                hazards.push(new Hazard(590, VIRTUAL_HEIGHT - 90, "SIBERBULY"));
+
+                portal = new Portal(710, VIRTUAL_HEIGHT - 305);
+            }
+
+            document.getElementById('level-display').innerText = levelConfig.level;
+            updateHUD();
+        }
+
+        function updateHUD() {
+            document.getElementById('player-score').innerText = score;
+            let livesStr = "";
+            for (let i = 0; i < 3; i++) {
+                livesStr += i < lives ? "❤️" : "🖤";
+            }
+            document.getElementById('player-lives').innerText = `${lives}/${3}`;
+        }
+
+        const keys = {};
+
+        // Keyboard Actions
+        window.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key === " " || e.key === "ArrowUp" || e.key.toLowerCase() === "w") {
+                if (gameActive && !isPaused) {
+                    player.jump();
+                }
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        // Touch Virtual Controls for Mobile Devices
+        const btnLeft = document.getElementById('btn-touch-left');
+        const btnRight = document.getElementById('btn-touch-right');
+        const btnJump = document.getElementById('btn-touch-jump');
+
+        btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); keys['a'] = true; });
+        btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); keys['a'] = false; });
+        btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); keys['d'] = true; });
+        btnRight.addEventListener('touchend', (e) => { e.preventDefault(); keys['d'] = false; });
+        btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); if (gameActive && !isPaused) player.jump(); });
+
+        // Touch Mouse fallbacks for reliability
+        btnLeft.addEventListener('mousedown', () => { keys['a'] = true; });
+        btnLeft.addEventListener('mouseup', () => { keys['a'] = false; });
+        btnRight.addEventListener('mousedown', () => { keys['d'] = true; });
+        btnRight.addEventListener('mouseup', () => { keys['d'] = false; });
+        btnJump.addEventListener('mousedown', () => { if (gameActive && !isPaused) player.jump(); });
+
+        function checkRectCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        let animationFrameId;
+
+        function gameLoop() {
+            if (!gameActive || isPaused) return;
+
+            // 1. CLEAR & DRAW BRIGHT SKY BACKGROUND
+            ctx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+            
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, VIRTUAL_HEIGHT);
+            skyGradient.addColorStop(0, LEVEL_DATA[currentLevelIndex].skyColor);
+            skyGradient.addColorStop(1, '#bae6fd'); // Warm light blue at the horizon
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+
+            // Draw Brighter, Beautiful Fluffy Clouds
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            
+            // Cloud 1
+            ctx.beginPath();
+            ctx.arc(100, 60, 20, 0, Math.PI * 2);
+            ctx.arc(130, 50, 30, 0, Math.PI * 2);
+            ctx.arc(160, 60, 20, 0, Math.PI * 2);
+            ctx.arc(130, 70, 20, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cloud 2
+            ctx.beginPath();
+            ctx.arc(350, 80, 15, 0, Math.PI * 2);
+            ctx.arc(375, 70, 25, 0, Math.PI * 2);
+            ctx.arc(400, 80, 15, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cloud 3
+            ctx.beginPath();
+            ctx.arc(650, 50, 25, 0, Math.PI * 2);
+            ctx.arc(685, 40, 35, 0, Math.PI * 2);
+            ctx.arc(720, 50, 25, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+
+            // 2. MOVEMENT CONTROLLER
+            player.vx = 0;
+            if (keys['a'] || keys['arrowleft']) {
+                player.vx = -player.speed;
+                player.facingRight = false;
+            }
+            if (keys['d'] || keys['arrowright']) {
+                player.vx = player.speed;
+                player.facingRight = true;
+            }
+
+            // 3. UPDATE & DRAW PLAYER (Ensuring character is always rendered!)
+            player.update();
+            player.draw();
+
+            // 4. PLATFORMS & PHYSICS
+            platforms.forEach(platform => {
+                platform.update();
+                platform.draw();
+
+                if (checkRectCollision(player, platform)) {
+                    if (player.vy > 0 && player.y + player.height - player.vy <= platform.y + 4) {
+                        player.y = platform.y - player.height;
+                        player.vy = 0;
+                        player.grounded = true;
+                        player.doubleJumpAvailable = true;
+                    }
+                }
+            });
+
+            // 5. STAR COINS WITH AUDIO TRIGGER
+            starCoins.forEach(coin => {
+                coin.draw();
+                if (!coin.collected && checkRectCollision(player, coin)) {
+                    coin.collected = true;
+                    score += 50;
+                    
+                    // Memutar efek koin Mario asli
+                    initCoinSound();
+                    if (isMusicEnabled && coinSound) {
+                        coinSound.currentTime = 0;
+                        coinSound.play().catch(e => console.log("Gagal memutar audio bintang:", e));
+                    } else {
+                        playSound('coin');
+                    }
+                    
+                    updateHUD();
+                }
+            });
+
+            // 6. HAZARDS & ATTACKS
+            hazards.forEach(hazard => {
+                hazard.update();
+                hazard.draw();
+
+                if (checkRectCollision(player, hazard)) {
+                    if (player.invulnerableTimer === 0) {
+                        lives--;
+                        playSound('hit');
+                        player.invulnerableTimer = 60; 
+                        updateHUD();
+
+                        if (lives <= 0) {
+                            endGame(false, "Pejuang gagal mempertahankan nilai Pancasila dari rintangan negatif global.");
+                        }
+                    }
+                }
+            });
+
+            // 7. QUIZ BLOCKS
+            quizBlocks.forEach((block, idx) => {
+                block.update();
+                block.draw();
+
+                if (!block.answered && checkRectCollision(player, block)) {
+                    if (player.vy < 0 && player.y <= block.y + block.height) {
+                        player.vy = 1;
+                        triggerQuiz(idx);
+                    }
+                }
+            });
+
+            // 8. PORTAL CHECK
+            portal.draw();
+            if (checkRectCollision(player, portal)) {
+                const allAnswered = quizBlocks.every(b => b.answered);
+                if (allAnswered) {
+                    completeLevel();
+                } else {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.font = 'bold 11px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('⚡ SELESAIKAN SEMUA KUIS UNTUK MEMBUKA PORTAL!', VIRTUAL_WIDTH / 2, 75);
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        let activeQuizBlockIndex = null;
+        let selectedScrambledIndices = []; 
+        let selectedOptionsIndex = null;   
+
+        function triggerQuiz(blockIndex) {
+            isPaused = true;
+            activeQuizBlockIndex = blockIndex;
+            
+            const levelConfig = LEVEL_DATA[currentLevelIndex];
+            const quizData = levelConfig.questions[blockIndex];
+
+            quizOverlay.style.display = 'flex';
+            document.getElementById('quiz-feedback').className = "hidden";
+            
+            const badge = document.getElementById('quiz-type-badge');
+            badge.innerText = quizData.type === 'scramble' ? 'SUSUN KATA' : 'PILIHAN GANDA';
+            badge.className = quizData.type === 'scramble' ? 
+                'bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase' : 
+                'bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase';
+
+            document.getElementById('quiz-prompt').innerText = quizData.prompt;
+
+            const dynamicArea = document.getElementById('quiz-dynamic-area');
+            dynamicArea.innerHTML = "";
+
+            if (quizData.type === 'scramble') {
+                setupScrambleQuiz(dynamicArea, quizData);
+            } else if (quizData.type === 'multiple') {
+                setupMultipleChoiceQuiz(dynamicArea, quizData);
+            }
+
+            document.getElementById('quiz-submit-btn').onclick = () => submitQuizAnswer(quizData);
+        }
+
+        function setupScrambleQuiz(container, data) {
+            selectedScrambledIndices = [];
+
+            const answerContainer = document.createElement('div');
+            answerContainer.className = "flex flex-wrap justify-center gap-2 mb-4 p-3 bg-slate-950/60 rounded-xl min-h-[50px] w-full border border-dashed border-slate-700";
+            
+            const lettersContainer = document.createElement('div');
+            lettersContainer.className = "flex flex-wrap justify-center gap-2 w-full";
+
+            const letters = data.scrambleText.split('');
+            letters.forEach((char, idx) => {
+                const btn = document.createElement('button');
+                btn.innerText = char;
+                btn.className = "w-10 h-10 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-600 rounded-lg text-lg font-extrabold text-yellow-300 transform active:scale-95 transition flex items-center justify-center";
+                btn.onclick = () => {
+                    if (!selectedScrambledIndices.includes(idx)) {
+                        selectedScrambledIndices.push(idx);
+                        btn.classList.add('opacity-30', 'pointer-events-none');
+                        
+                        const ansChar = document.createElement('span');
+                        ansChar.innerText = char;
+                        ansChar.className = "w-9 h-9 bg-yellow-500 text-slate-900 font-extrabold text-lg rounded-md flex items-center justify-center cursor-pointer animate-bounce";
+                        ansChar.onclick = () => {
+                            selectedScrambledIndices = selectedScrambledIndices.filter(val => val !== idx);
+                            btn.classList.remove('opacity-30', 'pointer-events-none');
+                            ansChar.remove();
+                        };
+                        answerContainer.appendChild(ansChar);
+                    }
+                };
+                lettersContainer.appendChild(btn);
+            });
+
+            const helper = document.createElement('p');
+            helper.className = "text-[10px] text-slate-400 mt-3 text-center w-full";
+            helper.innerHTML = `💡 Petunjuk: ${data.hint}<br><em>(Klik huruf pada kotak jawaban untuk batal)</em>`;
+
+            container.appendChild(answerContainer);
+            container.appendChild(lettersContainer);
+            container.appendChild(helper);
+        }
+
+        function setupMultipleChoiceQuiz(container, data) {
+            selectedOptionsIndex = null;
+            
+            const optionsWrapper = document.createElement('div');
+            optionsWrapper.className = "w-full space-y-2 flex flex-col";
+
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs md:text-sm transition flex items-start space-x-3";
+                
+                const bullet = document.createElement('span');
+                bullet.className = "w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center font-bold text-slate-400 bg-slate-900";
+                bullet.innerText = String.fromCharCode(65 + idx); 
+
+                const textSpan = document.createElement('span');
+                textSpan.className = "flex-1 text-slate-200";
+                textSpan.innerText = opt;
+
+                btn.appendChild(bullet);
+                btn.appendChild(textSpan);
+
+                btn.onclick = () => {
+                    Array.from(optionsWrapper.children).forEach(child => {
+                        child.className = "w-full text-left p-3 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs md:text-sm transition flex items-start space-x-3";
+                        child.querySelector('span').className = "w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center font-bold text-slate-400 bg-slate-900";
+                    });
+                    btn.className = "w-full text-left p-3 rounded-xl border-2 border-yellow-500 bg-slate-850 text-xs md:text-sm transition flex items-start space-x-3";
+                    bullet.className = "w-5 h-5 rounded-full border border-yellow-500 flex items-center justify-center font-bold text-slate-900 bg-yellow-400";
+                    selectedOptionsIndex = idx;
+                };
+
+                optionsWrapper.appendChild(btn);
+            });
+
+            container.appendChild(optionsWrapper);
+        }
+
+        function submitQuizAnswer(data) {
+            let isCorrect = false;
+            let finalAnswerString = "";
+
+            if (data.type === 'scramble') {
+                const scrambledLetters = data.scrambleText.split('');
+                finalAnswerString = selectedScrambledIndices.map(idx => scrambledLetters[idx]).join('');
+                if (finalAnswerString === data.correctText) {
+                    isCorrect = true;
+                }
+            } else if (data.type === 'multiple') {
+                if (selectedOptionsIndex === null) {
+                    const feedback = document.getElementById('quiz-feedback');
+                    feedback.className = "block bg-amber-500/20 text-amber-300 border border-amber-500/50 py-2 px-4 rounded-xl font-bold text-xs mb-3";
+                    feedback.innerText = "⚠️ Harap pilih salah satu opsi jawaban!";
+                    return;
+                }
+                if (selectedOptionsIndex === data.correctIndex) {
+                    isCorrect = true;
+                }
+            }
+
+            const feedback = document.getElementById('quiz-feedback');
+            
+            if (isCorrect) {
+                playSound('correct');
+                feedback.className = "block bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 py-3 px-4 rounded-xl text-xs mb-3";
+                feedback.innerHTML = `🎉 <strong>BENAR!</strong> +200 Poin. Nilai karakter berhasil dipulihkan!`;
+                score += 200;
+                updateHUD();
+
+                quizBlocks[activeQuizBlockIndex].answered = true;
+
+                const actionBtn = document.getElementById('quiz-submit-btn');
+                actionBtn.innerText = "LANJUTKAN PERMAINAN";
+                actionBtn.onclick = () => {
+                    quizOverlay.style.display = 'none';
+                    isPaused = false;
+                    actionBtn.innerText = "VERIFIKASI JAWABAN";
+                    gameLoop(); 
+                };
+            } else {
+                playSound('wrong');
+                feedback.className = "block bg-red-500/20 text-red-300 border border-red-500/50 py-3 px-4 rounded-xl text-xs mb-3";
+                
+                if (data.type === 'scramble') {
+                    feedback.innerHTML = `❌ <strong>KURANG TEPAT!</strong> Susunan kata "${finalAnswerString}" belum cocok. Coba diskusikan kembali!`;
+                } else {
+                    feedback.innerHTML = `❌ <strong>JAWABAN SALAH!</strong><br><span class="text-[10px] text-slate-400 font-semibold">${data.explanation}</span>`;
+                }
+                
+                if (score >= 20) score -= 20;
+                updateHUD();
+            }
+        }
+
+        function startGame() {
+            // Aktifkan Audio Context dan mainkan efek suara mulai permainan
+            getAudioContext();
+            playSound('powerup');
+            
+            menuScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            outcomeScreen.style.display = 'none';
+            
+            gameActive = true;
+            isPaused = false;
+            score = 0;
+            lives = 3;
+            
+            resizeCanvas();
+            loadLevel(0);
+            
+            // Putar berkas MP3 lagu tema Super Mario
+            startMusic();
+            
+            gameLoop();
+        }
+
+        function pauseGame() {
+            if (!gameActive) return;
+            isPaused = true;
+            pauseOverlay.style.display = 'flex';
+            
+            // Jeda lagu latar saat game di-pause
+            if (bgMusic) {
+                bgMusic.pause();
+            }
+        }
+
+        function resumeGame() {
+            isPaused = false;
+            pauseOverlay.style.display = 'none';
+            
+            // Lanjutkan lagu latar jika musik dalam posisi aktif
+            if (bgMusic && isMusicEnabled) {
+                bgMusic.play().catch(e => console.log(e));
+            }
+            
+            gameLoop();
+        }
+
+        function completeLevel() {
+            cancelAnimationFrame(animationFrameId);
+            gameActive = false;
+            
+            // Hentikan BGM Utama
+            stopMusic();
+
+            // Putar audio Kemenangan Smash Bros asli (menggunakan super-smash-bros-mario-luigi-victory.mp3)
+            initStageClearMusic();
+            if (isMusicEnabled && stageClearMusic) {
+                stageClearMusic.currentTime = 0;
+                stageClearMusic.play().catch(e => console.log("Gagal memutar musik Kemenangan Smash Bros:", e));
+            }
+            
+            const nextBtn = document.getElementById('outcome-primary-btn');
+
+            if (currentLevelIndex < LEVEL_DATA.length - 1) {
+                document.getElementById('outcome-emoji').innerText = "🏆";
+                document.getElementById('outcome-title').innerText = "LEVEL SELESAI!";
+                document.getElementById('outcome-desc').innerText = `Hebat! Kamu berhasil mengumpulkan nilai Pancasila di level ${LEVEL_DATA[currentLevelIndex].title}.`;
+                nextBtn.innerText = "LANJUT KE LEVEL BERIKUTNYA";
+                nextBtn.onclick = () => {
+                    outcomeScreen.style.display = 'none';
+                    gameActive = true;
+                    // Hentikan musik kemenangan Smash Bros jika beralih level
+                    if (stageClearMusic) {
+                        stageClearMusic.pause();
+                        stageClearMusic.currentTime = 0;
+                    }
+                    startMusic();
+                    loadLevel(currentLevelIndex + 1);
+                    gameLoop();
+                };
+            } else {
+                document.getElementById('outcome-emoji').innerText = "👑";
+                document.getElementById('outcome-title').innerText = "PANCASILA EMBASSY MASTER!";
+                document.getElementById('outcome-desc').innerText = "Luar biasa! Kamu berhasil menaklukkan seluruh level tantangan Pancasila Kelas XII. Kamu siap menghadapi tantangan era global dengan jiwa ideologi negara!";
+                nextBtn.innerText = "MAIN LAGI";
+                nextBtn.onclick = () => {
+                    if (stageClearMusic) {
+                        stageClearMusic.pause();
+                        stageClearMusic.currentTime = 0;
+                    }
+                    returnToMainMenu();
+                };
+            }
+
+            document.getElementById('outcome-score').innerText = score;
+            let livesStr = "";
+            for (let i = 0; i < lives; i++) livesStr += "❤️";
+            document.getElementById('outcome-lives').innerText = livesStr;
+
+            outcomeScreen.style.display = 'flex';
+        }
+
+        function endGame(victory, reasonText) {
+            cancelAnimationFrame(animationFrameId);
+            gameActive = false;
+            
+            // Hentikan lagu latar saat Game Over
+            stopMusic();
+
+            // Putar audio Game Over
+            initGameOverMusic();
+            if (isMusicEnabled && gameOverMusic) {
+                gameOverMusic.currentTime = 0;
+                gameOverMusic.play().catch(e => console.log("Gagal memutar musik Game Over:", e));
+            }
+
+            document.getElementById('outcome-emoji').innerText = "💀";
+            document.getElementById('outcome-title').innerText = "TANTANGAN GAGAL";
+            document.getElementById('outcome-desc').innerText = reasonText;
+            
+            document.getElementById('outcome-score').innerText = score;
+            document.getElementById('outcome-lives').innerText = "Kosong";
+
+            const nextBtn = document.getElementById('outcome-primary-btn');
+            nextBtn.innerText = "COBA LAGI LEVEL INI";
+            nextBtn.onclick = () => {
+                outcomeScreen.style.display = 'none';
+                gameActive = true;
+                lives = 3;
+                
+                // Matikan suara Game Over lama dan jalankan lagu petualangan kembali
+                if (gameOverMusic) {
+                    gameOverMusic.pause();
+                    gameOverMusic.currentTime = 0;
+                }
+                startMusic();
+                
+                loadLevel(currentLevelIndex);
+                gameLoop();
+            };
+
+            outcomeScreen.style.display = 'flex';
+        }
+
+        function returnToMainMenu() {
+            playSound('coin');
+            cancelAnimationFrame(animationFrameId);
+            gameActive = false;
+            isPaused = false;
+            
+            // Matikan dan reset posisi pemutaran lagu latar kembali ke menu utama
+            stopMusic();
+            
+            // Matikan musik Game Over jika sedang bermain kembali ke menu utama
+            if (gameOverMusic) {
+                gameOverMusic.pause();
+                gameOverMusic.currentTime = 0;
+            }
+
+            // Matikan musik Kemenangan Smash Bros jika sedang aktif
+            if (stageClearMusic) {
+                stageClearMusic.pause();
+                stageClearMusic.currentTime = 0;
+            }
+            
+            menuScreen.style.display = 'flex';
+            gameScreen.style.display = 'none';
+            outcomeScreen.style.display = 'none';
+            pauseOverlay.style.display = 'none';
+            quizOverlay.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
